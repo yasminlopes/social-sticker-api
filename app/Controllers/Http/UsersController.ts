@@ -1,84 +1,36 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { UserService } from 'App/Services/UserService'
 import User from 'App/Models/User'
-import { messagesHelper } from 'App/Helpers/messages/messages.helper'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { inject } from '@adonisjs/fold';
 
+@inject()
 export default class UsersController {
 
+  constructor(public readonly userService: UserService) {
+  }
+
   public async index({}: HttpContextContract) {
-    const users = await User.all()
-    return {
-      users
-    }
+    return await this.userService.index();
   }
 
   public async create({}: HttpContextContract) {}
 
-  public async store({ request, response }: HttpContextContract) {
-    const body = request.only(['name', 'last_name', 'email', 'username', 'password'])
-  
-    const emailExists = await User.findBy('email', body.email)
-
-    if (emailExists) {
-      return response.status(403).send({ error:  messagesHelper.EMAIL_EXISTS })
-    }
-  
-    const usernameExists = await User.findBy('username', body.username)
-
-    if (usernameExists) {
-      return response.status(403).send({ error:  messagesHelper.USERNAME_EXISTS })
-    }
-  
-    const user = await User.create(body)
-  
-    return { 
-      message: 'Cadastro realizado com sucesso!',
-      user
-     }
+  public async store(ctx: HttpContextContract) {
+    return await this.userService.store(ctx)
   }
 
   public async show({ params }: HttpContextContract) {
-    const user = await User.findOrFail(params.id)
-
-    return { user }
+    return await this.userService.show(params.id)
   }
 
   public async edit({}: HttpContextContract) {
   }
 
-  public async update({ params, request, response }: HttpContextContract) {
-    try {
-      const user = await User.findOrFail(params.id)
-  
-      const body = request.only(['name', 'last_name', 'email', 'password'])
-
-      if (!body.name || !body.last_name || !body.email || !body.password) {
-        return response.status(400).send({ error: messagesHelper.BAD_REQUEST })
-      }
-  
-      const emailExists = await User.findBy('email', body.email)
-      
-      if (emailExists) {
-        return response.status(403).send({ error:  messagesHelper.EMAIL_EXISTS })
-      }
-      
-      await user.merge(body).save()
-  
-      return {
-        message: 'Editado com sucesso',
-        user
-      }
-    } catch {
-      return response.status(404).send({ error: messagesHelper.USER_NOT_FOUND })
-    }
+  public async update(ctx: HttpContextContract) {
+    return await this.userService.update(ctx)
   }
 
   public async destroy({ params }: HttpContextContract) {
-   const user = await User.findOrFail(params.id)
-
-    user.delete()
-
-    return {
-      message: 'Usuário deletado com sucesso!'
-    }
+   return await this.userService.destroy(params.id)
   }
 }
