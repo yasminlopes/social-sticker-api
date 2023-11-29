@@ -1,3 +1,5 @@
-import Route from '@ioc:Adonis/Core/Route'
+import Route from "@ioc:Adonis/Core/Route";
 
-Route.resource('users', 'UsersController')
+Route.resource("login", "LoginController");
+
+Route.resource("users", "UsersController");
