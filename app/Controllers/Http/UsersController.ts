@@ -8,7 +8,9 @@ export default class UsersController {
   constructor(public readonly userService: UserService) {
   }
 
-  public async index({}: HttpContextContract) {
+  public async index({ auth }: HttpContextContract) {
+    await auth.use('api').authenticate();
+
     return await this.userService.index();
   }
 

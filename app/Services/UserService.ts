@@ -49,14 +49,15 @@ export class UserService {
     }
 
     const user = await User.create(body);
-
     return {
       message: "Cadastro realizado com sucesso!",
       user,
     };
   }
 
-  public async update({ params, request, response }: HttpContextContract) {
+  public async update({ params, request, response, auth }: HttpContextContract) {
+    await auth.use("api").authenticate();
+
     try {
       const user = await User.findOrFail(params.id);
 
@@ -87,7 +88,9 @@ export class UserService {
     }
   }
 
-  public async destroy({ params, response }: HttpContextContract) {
+  public async destroy({ params, response, auth }: HttpContextContract) {
+    await auth.use("api").authenticate();
+
     try {
       const user = await User.findOrFail(params.id);
 
