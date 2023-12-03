@@ -10,5 +10,7 @@ export const messagesHelper = {
   UNAUTHORIZED: "Oops! Você não tem permissão para acessar este recurso.",
 
   INVALID_CREDENTIALS: "Credenciais inválidas.",
+
+  LOGIN_SUCCESS: "Login realizado com sucesso.",
   
 };
