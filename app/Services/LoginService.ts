@@ -1,3 +1,5 @@
+import { messagesHelper } from 'App/Helpers/messages/messages.helper';
+
 export class LoginService {
   constructor() {}
 
@@ -6,10 +8,13 @@ export class LoginService {
     const password = request.input("password");
 
     try {
-      const token = await auth.use("api").attempt(username, password);
-      return token;
+      const data = await auth.use("api").attempt(username, password);
+      return {
+        message: messagesHelper.LOGIN_SUCCESS,
+        data
+      };
     } catch {
-      return response.unauthorized({ error: "Invalid credentials" });
+      return response.unauthorized({ error: messagesHelper.INVALID_CREDENTIALS });
     }
   }
 }
